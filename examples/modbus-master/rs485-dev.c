@@ -57,6 +57,7 @@ static int input_handler(unsigned char c) {
 }
 
 void rs485_input_reset() {
+  printf("rs485_input_reset\n\r");
   pos = 0;
 }
 
@@ -66,6 +67,8 @@ int rs485_input_len() {
 
 int rs485_transmit(uint8_t *data, int len) {
   int i;
+  
+  printf("rs485_transmit\n\r");
   
   //RS485_TRANSMIT_SET(); {P##port##OUT |= 1 << bit;} P4OUT |= 1 << 5
   /* a few NOP's just to wait some before sending data */
@@ -87,7 +90,7 @@ void rs485_init() {
   //RS485_TRANSMIT_SELECT(); {P##port##SEL &= ~(1 << bit);} P4SEL &= ~(1 << 5) 
   //RS485_TRANSMIT_MAKE_OUTPUT(); {P##port##DIR |= 1 << bit;}  P4DIR |= 1 << bit 
 
-  printf("Starting up test RS485 \n");
+  //printf("Starting up test RS485 \n");
 
   //UCA0CTL1 |= UCSWRST;            /* Hold peripheral in reset state */
   //UCA0CTL1 |= UCSSEL_2;           /* CLK = SMCLK */

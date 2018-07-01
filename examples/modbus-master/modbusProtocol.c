@@ -52,6 +52,8 @@ modbusCRC(unsigned char *data, int dataLen)
   unsigned int crc = 0xffff, i;
   unsigned short tmp, short_c;
   
+  printf("modbusCRC\n\r");
+  
   for(i = 0; i < dataLen; i++) {
     short_c = 0x00FF & (unsigned short) data[i];
     tmp = crc ^ short_c;
@@ -66,6 +68,8 @@ int modbusSendQuery(unsigned char *data, unsigned char dataLen,
 {
   unsigned int crc;
   int sendStatus;
+
+	printf("modbusSendQuery\n\r");
 
   if(hasCRC) {
     crc = modbusCRC(data, dataLen);
@@ -97,6 +101,8 @@ int modbusReadResponse(unsigned char *data, unsigned char hasCRC)
   int i;
   int len;
   int numberOfDataBytes;
+
+	printf("modbusReadResponse\n\r");
 
   if((len = rs485_input_len()) <= 0) {
     printf("RX Error...length <= 0\n"); 
@@ -187,6 +193,8 @@ int modbusReadCoilStatus(st_modbusQuery *modbusQuery, st_modbusIOGeneric *coilSt
   
   byteCount = 0;
 
+	printf("modbusReadCoilStatus\n\r");
+
   /* build the packet into modbus query format */
   queryPacket[0] = modbusQuery->address;
   queryPacket[1] = modbusQuery->function;
@@ -204,8 +212,8 @@ int modbusReadCoilStatus(st_modbusQuery *modbusQuery, st_modbusIOGeneric *coilSt
   if (modbusSendQuery(queryPacket, len, hasCrc) < 0)
     return -1;
 
-  //printf("Delay before reading\n\r");
-  clock_wait(100);
+  printf("Retardo antes de leer respuesta\n\r");
+  clock_wait(50);
 
   /* read the response */
   byteCount = modbusReadResponse(responsePacket, hasCrc);

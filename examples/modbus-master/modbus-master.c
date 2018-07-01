@@ -39,19 +39,43 @@
 
 #include "contiki.h"
 #include "modbus-api.h"
+#include "dev/leds.h"
 
 #include <stdio.h> /* For printf() */
+
 /*---------------------------------------------------------------------------*/
 PROCESS(hello_world_process, "Hello world process");
 AUTOSTART_PROCESSES(&hello_world_process);
 /*---------------------------------------------------------------------------*/
 PROCESS_THREAD(hello_world_process, ev, data)
 {
-  PROCESS_BEGIN();
+	static struct etimer et;
+	int rv = 0;
+	
+	PROCESS_BEGIN();
 
-  printf("Hola mundo\n");
-  modbus_init();
-  modbus_read_register(40010);
+	printf("Iniciando prueba modbus...\n");
+	modbus_init();
+  
+	while(1) {
+		printf("Pausa 3 segundos\n");
+		leds_toggle(LEDS_GREEN);
+		
+		etimer_set(&et, 3 * CLOCK_SECOND);
+		PROCESS_WAIT_EVENT_UNTIL(etimer_expired(&et));
+
+		rv = modbus_read_register(100);
+		if(rv == 0) {
+			//float f = modbus_get_float(0);
+			printf("Estado exitoso luego de envío de trama\n\r");
+			//printf("Valor leído: %f \n", f);
+			
+		} else if(rv == -1) {
+			printf("Estado de error luego de envío de trama: -1\n\r");
+		} else {
+			printf("Estado de error luego de envío de trama: %d\n\r", rv);
+		}
+    }
   
   PROCESS_END();
 }
